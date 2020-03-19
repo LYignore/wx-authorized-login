@@ -1,0 +1,24 @@
+{
+    "name": "lyignore/wx-authorized-login",
+    "description": "Use the websocket authorization applet to get the phone number login",
+    "authors": [
+        {
+            "name": "LY",
+            "email": "1585296643@qq.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Lyignore\\WxAuthorizedLogin\\": "./src/",
+            "Lyignore\\WxAuthorizedLogin\\Domain\\": "./domain/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Lyignore\\WxAuthorizedLogin\\WebSocketServiceProvider"
+            ]
+        }
+    }
+}
