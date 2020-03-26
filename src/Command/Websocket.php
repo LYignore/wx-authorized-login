@@ -8,6 +8,11 @@ use Lyignore\WxAuthorizedLogin\Repositories\ServerRepository;
 
 class Websocket extends Command
 {
+    /**
+     * The server object
+     *
+     * @var obj
+     */
     protected $server;
     /**
      * The name and signature of the console command.

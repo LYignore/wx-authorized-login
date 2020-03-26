@@ -1,83 +1,75 @@
 <?php
 namespace Lyignore\WxAuthorizedLogin\Entities;
 
+use Lyignore\WxAuthorizedLogin\Domain\Entities\LoginSubjectEntityInterface;
+use Lyignore\WxAuthorizedLogin\Domain\Entities\MemoryEntityInterface;
+use Lyignore\WxAuthorizedLogin\Domain\Entities\ServerEntityInterface;
+use Lyignore\WxAuthorizedLogin\Domain\Entities\TcpServerEntityInterface;
 use Lyignore\WxAuthorizedLogin\Domain\Entities\WebsocketServerEntityInterface;
+use Lyignore\WxAuthorizedLogin\Domain\Repositories\ServerRepositoryInterface;
 
-class WebsocketServer implements WebsocketServerEntityInterface
+class WebsocketServer implements ServerEntityInterface, WebsocketServerEntityInterface
 {
-    protected $port='8000';
-    protected $server;      // swoole的实例化
-    protected $table;       // 内存结构表
-    protected $listern;     // 监听进程
-    protected $user;
+    public $config;
 
-    public function __construct()
+    public $server;
+
+    public $listern;
+
+    public $table;
+
+    public function __construct(MemoryEntityInterface $memoryEntity, array $config=[])
     {
-        // 初始化swoole的websocket配置
-        $this->initServerConfig();
+        $this->config = array_merge(config('websocketlogin.websocket'), $config);
 
-        // 初始化共享存储
-        $this->createTable();
+        $this->table = $memoryEntity;
 
-        // 监听用户登录通知事件
-        $this->initListeningEvent();
+        $this->initServer();
     }
 
-    public function initSocketServerConfig(array $config=[])
+    public function initServer()
     {
         if(!$this->server instanceof \Swoole\WebSocket\Server){
-            $config = array_merge(config('websocketlogin.websocket'), $config);
+            $config = $this->config;
             $this->server = new \Swoole\WebSocket\Server($config['uri'], $config['port']);
             $this->server->set([
                 'worker_num'  => $config['worker_num'],
                 'package_max_length' => $config['package_max_length'],
                 'open_eof_check' => $config['open_eof_check'],
                 'daemonize' => $config['daemonize'],
+                'dispatch_mode' => $config['dispatch_mode']
             ]);
         }
         return $this->server;
     }
 
-    public function initListeningEvent(array $config=[])
+    public function initListenEvent(TcpServerEntityInterface $tcpServerEntity)
     {
-        // 调用LoginSubject绑定观察者，实现thrift的客户端
+        if(!$this->server instanceof \Swoole\WebSocket\Server){
+            throw new \Exception('swoole的websocket服务还未开启');
+        }
+        try{
+            $this->listern = $tcpServerEntity;
+            $this->listern->on('connect', [$tcpServerEntity, 'listernConnect']);
+            //$this->listern->on('receive', [$tcpServerEntity, 'listernReceive']);
+            return $this->listern;
+        }catch (\TException $e){
+            throw new \Exception('监听启动失败');
+        }
     }
 
-    /**
-     * Bind the callback function of websocket and call start to start
-     */
-    public function start()
+    public function start(ServerRepositoryInterface $serverRepository)
     {
-        $this->server->on("open", [$this, 'wsOpen']);
-        $this->server->on("message", [$this, 'wsMessage']);
-        $this->server->on("close", [$this, 'wsClose']);
+        $this->server->on("open", [$serverRepository, 'wsOpen']);
+        $this->server->on("message", [$serverRepository, 'wsMessage']);
+        $this->server->on("close", [$serverRepository, 'wsClose']);
 
         $this->server->start();
-    }
-
-    public function wsOpen($server, $request)
-    {
-        // TODO: Implement wsOpen() method.
-    }
-
-    public function wsMessage($server, $frame)
-    {
-        // TODO: Implement wsMessage() method.
-    }
-
-    public function wsClose($server, $frame)
-    {
-        // TODO: Implement wsClose() method.
     }
 
     public function allClose()
     {
         echo "websocket服务器关闭".PHP_EOL;
         $this->server->close();
-    }
-
-    public function createTable()
-    {
-
     }
 }

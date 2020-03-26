@@ -10,5 +10,5 @@ struct Response {
 // 服务体
 service LoginCommonCallService {
     // json字符串参数 客户端请求方法
-    Response update(1: string params)
+    Response notify(1: string params)
 }

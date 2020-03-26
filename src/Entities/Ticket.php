@@ -20,7 +20,7 @@ class Ticket implements TicketEntityInterface
         $this->identify = $str;
     }
 
-    public function getIdentify()
+    public function getIdentity()
     {
         return $this->identify;
     }

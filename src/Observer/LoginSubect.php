@@ -1,11 +1,14 @@
 <?php
-namespace Lyignore\WxAuthorizedLogin\Entities;
+namespace Lyignore\WxAuthorizedLogin\Observer;
 
 use Lyignore\WxAuthorizedLogin\Domain\Entities\LoginSubjectEntityInterface;
+use Lyignore\WxAuthorizedLogin\ResponseTypes\StatusResponse;
 use SplObserver;
 
 class LoginSubect implements LoginSubjectEntityInterface
 {
+    public $loginObserverPool = [];
+    public $params;
     /**
      * Bind login observer after user applies for login entry
      * @param $observer SplObserver
@@ -13,7 +16,8 @@ class LoginSubect implements LoginSubjectEntityInterface
      */
     public function attach(SplObserver $observer)
     {
-        // TODO: Implement attach() method.
+        $identify = $observer->getIdentify();
+        $this->loginObserverPool[$identify] = $observer;
     }
 
     /**
@@ -23,7 +27,8 @@ class LoginSubect implements LoginSubjectEntityInterface
      */
     public function detach(SplObserver $observer)
     {
-        // TODO: Implement detach() method.
+        $identify = $observer->getIdentify();
+        unset($this->loginObserverPool[$identify]);
     }
 
     /**
@@ -32,6 +37,12 @@ class LoginSubect implements LoginSubjectEntityInterface
      */
     public function notify()
     {
-        // TODO: Implement notify() method.
+        StatusResponse::success($this->params);
+    }
+
+    public function decouplingNotify($params)
+    {
+        $this->params = $params;
+        $this->notify();
     }
 }
