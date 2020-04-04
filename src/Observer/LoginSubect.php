@@ -9,6 +9,7 @@ class LoginSubect implements LoginSubjectEntityInterface
 {
     public $loginObserverPool = [];
     public $params;
+    public $notifyResult = -1;
     /**
      * Bind login observer after user applies for login entry
      * @param $observer SplObserver
@@ -37,12 +38,13 @@ class LoginSubect implements LoginSubjectEntityInterface
      */
     public function notify()
     {
-        StatusResponse::success($this->params);
+        $this->notifyResult = 200;
+        return $this;
     }
 
     public function decouplingNotify($params)
     {
         $this->params = $params;
-        $this->notify();
+        return $this->notify();
     }
 }

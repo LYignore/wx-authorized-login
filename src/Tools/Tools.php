@@ -41,5 +41,7 @@ trait Tools
     {
         $base64 = base64_encode($contents);
         return ('data:'. $mime . ';base64,'. $base64);
+        // Enter the rendered image directly
+        //return '<img src="data:'. $mime . ';base64,'. $base64.'" />';
     }
 }

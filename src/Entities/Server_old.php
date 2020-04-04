@@ -4,10 +4,10 @@ namespace Lyignore\WxAuthorizedLogin\Entities;
 use Lyignore\WxAuthorizedLogin\Domain\Entities\LoginSubjectEntityInterface;
 use Lyignore\WxAuthorizedLogin\Domain\Entities\ServerEntityInterface;
 use Lyignore\WxAuthorizedLogin\ResponseTypes\StatusResponse;
-use src\Thrift\Server\LoginCommonCallServiceProcessor;
-use src\Thrift\Server\LoginCommonService;
-use src\Thrift\Server\ServerTransport;
-use src\Thrift\Server\Transport;
+use Lyignore\WxAuthorizedLogin\Thrift\Server\LoginCommonCallServiceProcessor;
+use Lyignore\WxAuthorizedLogin\Thrift\Server\LoginCommonService;
+use Lyignore\WxAuthorizedLogin\Thrift\Server\ServerTransport;
+use Lyignore\WxAuthorizedLogin\Thrift\Server\Transport;
 use Thrift\Factory\TBinaryProtocolFactory;
 use Thrift\Factory\TTransportFactory;
 use Thrift\Transport\TFramedTransport;
@@ -106,7 +106,7 @@ class Server implements ServerEntityInterface
         $observer = new LoginObserver();
         $observer->generateObserver();
         $this->loginSubject->attach($observer);
-        $ticket = $observer->getIdentity();
+        $ticket = $observer->getIdentify();
         $fd = $request->fd;
         $memoryData = compact('fd', 'ticket');
         $this->table->set($ticket, $memoryData);
@@ -129,7 +129,7 @@ class Server implements ServerEntityInterface
             $ticket = $fdInfo['uid'];
             if($this->table->exist($ticket)){
                 $observer = new LoginObserver();
-                $observer->setIdentity($ticket);
+                $observer->setIdentify($ticket);
                 $this->loginSubject->detach($observer);
             }
         }

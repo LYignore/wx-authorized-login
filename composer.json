@@ -12,6 +12,10 @@
         "apache/thrift": "^0.13.0"
     },
     "autoload": {
+        "files": [
+            "src/Thrift/Server/LoginCommonCallService.php",
+            "src/Thrift/Client/LoginCommonCallService.php"
+        ],
         "psr-4": {
             "Lyignore\\WxAuthorizedLogin\\": "./src/",
             "Lyignore\\WxAuthorizedLogin\\Domain\\": "./domain/"
@@ -20,7 +24,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Lyignore\\WxAuthorizedLogin\\WebSocketServiceProvider"
+                "Lyignore\\WxAuthorizedLogin\\LoginServiceProvider"
             ]
         }
     }

@@ -28,7 +28,7 @@ class WechatQrResponse
         $https = self::getInstanceHttp();
         try{
             $response = $https->request('get', $url, ['verify' => false]);
-            return \GuzzleHttp\json_encode($response->getBody());
+            return \GuzzleHttp\json_decode($response->getBody(), true);
         }catch (\Exception $e){
             throw new \Exception('微信获取access_token失败');
         }
@@ -39,7 +39,7 @@ class WechatQrResponse
      * @param $scenes string Specify QR code transfer parameters less than 32 bits
      * @return array Data stream pictures that can be rendered directly in the browser
      */
-    public function generateWxQr($scenes)
+    public function generateEntry($scenes)
     {
         $uri = $this->config['wx_qr_logos'];
         $tokenResponse = $this->generateAccessToken();
@@ -58,11 +58,11 @@ class WechatQrResponse
                 'verify' => false,
                 'json'  => $body
             ]);
-            return [
-                'status_code' => $response->getStatusCode(),
-                'info' => $this->binaryImageRedering($response->getBody(),'image/png')
-            ];
-//            return $this->binaryImageRedering($response->getBody(),'image/png');
+//            return [
+//                'status_code' => $response->getStatusCode(),
+//                'info' => $this->binaryImageRedering($response->getBody(),'image/png')
+//            ];
+            return $this->binaryImageRedering($response->getBody(),'image/png');
         }catch (\Exception $e){
             throw new \Exception('获取微信登录二维码失败');
         }

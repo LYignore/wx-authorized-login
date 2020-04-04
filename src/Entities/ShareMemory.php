@@ -23,7 +23,7 @@ class ShareMemory implements MemoryEntityInterface
         self::$table = new Table($size);
     }
 
-    public static function getInstance(array $changeConfig)
+    public static function getInstance(array $changeConfig=[])
     {
         if(!self::$instance){
             $config = array_merge(config('websocketlogin.memory'), $changeConfig);

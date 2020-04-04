@@ -12,15 +12,15 @@ class Ticket implements TicketEntityInterface
     protected function __construct($length)
     {
         $ticket = self::generateTicket($length);
-        $this->setIdentity($ticket);
+        $this->setIdentify($ticket);
     }
 
-    public function setIdentity($str)
+    public function setIdentify($str)
     {
         $this->identify = $str;
     }
 
-    public function getIdentity()
+    public function getIdentify()
     {
         return $this->identify;
     }

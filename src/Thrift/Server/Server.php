@@ -1,5 +1,5 @@
 <?php
-namespace src\Thrift\Server;
+namespace Lyignore\WxAuthorizedLogin\Thrift\Server;
 
 use Thrift\Server\TServer;
 use Swoole\Server as SwooleServer;

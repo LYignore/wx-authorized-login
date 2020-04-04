@@ -63,7 +63,7 @@ class WebsocketServer implements ServerEntityInterface, WebsocketServerEntityInt
         $this->server->on("open", [$serverRepository, 'wsOpen']);
         $this->server->on("message", [$serverRepository, 'wsMessage']);
         $this->server->on("close", [$serverRepository, 'wsClose']);
-
+        echo "开启websocket服务:";
         $this->server->start();
     }
 

@@ -34,12 +34,12 @@ class LoginObserver implements LoginObserverEntityInterface
         // TODO: Implement decouplingUpdate() method.
     }
 
-    public function setIdentity($str)
+    public function setIdentify($str)
     {
         $this->identify = $str;
     }
 
-    public function getIdentity()
+    public function getIdentify()
     {
         return $this->identify;
     }
@@ -47,7 +47,7 @@ class LoginObserver implements LoginObserverEntityInterface
     public function generateObserver($length = 6)
     {
         $ticket = self::generateTicket($length);
-        $this->setIdentity($ticket);
+        $this->setIdentify($ticket);
     }
 
     /**

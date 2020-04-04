@@ -4,17 +4,14 @@ namespace Lyignore\WxAuthorizedLogin\Entities;
 use Lyignore\WxAuthorizedLogin\Domain\Entities\LoginSubjectEntityInterface;
 use Lyignore\WxAuthorizedLogin\Domain\Entities\MemoryEntityInterface;
 use Lyignore\WxAuthorizedLogin\Domain\Entities\ServerEntityInterface;
+use Lyignore\WxAuthorizedLogin\Domain\Entities\TcpServerEntityInterface;
 use Lyignore\WxAuthorizedLogin\Domain\Entities\WebsocketServerEntityInterface;
 use Lyignore\WxAuthorizedLogin\ResponseTypes\StatusResponse;
-use src\Thrift\Server\LoginCommonCallServiceProcessor;
-use src\Thrift\Server\LoginCommonService;
-use src\Thrift\Server\ServerTransport;
-use src\Thrift\Server\Transport;
 use Thrift\Factory\TBinaryProtocolFactory;
 use Thrift\Factory\TTransportFactory;
 use Thrift\Transport\TFramedTransport;
 
-class TcpServer implements ServerEntityInterface
+class TcpServer implements ServerEntityInterface, TcpServerEntityInterface
 {
     public $config;
 
@@ -51,7 +48,7 @@ class TcpServer implements ServerEntityInterface
     {
         if(!$this->server instanceof \Swoole\Server){
             $config = $this->config;
-            $this->server = $this->mainServer->addListener($config['uri'], $config['port'], $config['type']);
+            $this->server = $this->mainServer->server->addListener($config['uri'], $config['port'], $config['type']);
             $this->server->set([
                 'worker_num'  => $config['worker_num'],
                 'dispatch_mode' => $config['dispatch_mode'],

@@ -1,17 +1,31 @@
 <?php
 namespace Lyignore\WxAuthorizedLogin\Repositories;
 
+use Lyignore\WxAuthorizedLogin\Domain\Entities\TicketEntityInterface;
 use Lyignore\WxAuthorizedLogin\Domain\Repositories\UserRepositoryInterface;
+use Lyignore\WxAuthorizedLogin\Entities\Ticket;
+use Lyignore\WxAuthorizedLogin\Thrift\Client\LoginCommonClient;
 
 class UserRepository implements UserRepositoryInterface
 {
-    public function AuthorizedLogin()
+    public function authorizedLogin(TicketEntityInterface $ticketEntity, array $params)
     {
-        // TODO: Implement AuthorizedLogin() method.
-        // 外部代码调用，当逻辑判断用户登录后调用此方法
+        $ticket = $ticketEntity->getIdentify();
+        $phone = $params['phone']??"匿名用戶";
+        $data = compact('ticket', 'phone');
+        $loginCommonClient = new LoginCommonClient();
+        return $loginCommonClient->notify($data);
+    }
 
-        // 继承观察者模式主体对象，调用notify方法通知观察者
-
-        // 通知方法为向调用thrift客户端方法，向thrift服务器发送消息
+    /**
+     * Gets the Ticket for the specified identity identifier
+     * @param string $str identifier of ticket
+     * @return entity Lyignore\WxAuthorizedLogin\Entities\Ticket
+     */
+    public function getTicket($str)
+    {
+        $ticket = Ticket::getInstance();
+        $ticket->setIdentify($str);
+        return $ticket;
     }
 }

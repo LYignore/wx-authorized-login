@@ -16,7 +16,7 @@ interface LoginObserverEntityInterface extends \SplObserver
      */
     public static function generateTicket($length);
 
-    public function setIdentity($str);
+    public function setIdentify($str);
 
-    public function getIdentity();
+    public function getIdentify();
 }

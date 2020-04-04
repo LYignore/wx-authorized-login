@@ -1,25 +1,36 @@
 <?php
-namespace src\Thrift\Server;
+namespace Lyignore\WxAuthorizedLogin\Thrift\Server;
 
+use Lyignore\WxAuthorizedLogin\Domain\Entities\MemoryEntityInterface;
+use Lyignore\WxAuthorizedLogin\Domain\Entities\WebsocketServerEntityInterface;
 use Lyignore\WxAuthorizedLogin\Repositories\ServerRepository;
 
 class LoginCommonService implements LoginCommonCallServiceIf
 {
-    protected $server;
+    protected $websocketServer;
 
-    public function __construct(\Swoole\WebSocket\Server $websocketServer)
+    protected $table;
+
+    public function __construct(WebsocketServerEntityInterface $websocketServer, MemoryEntityInterface $memoryEntity)
     {
-        $this->server = $websocketServer;
+        $this->websocketServer = $websocketServer;
+        $this->table = $memoryEntity;
     }
 
     public function notify($params)
     {
         $serverRepository = new ServerRepository();
 
-        $result = $serverRepository->receiveNotifyMessage($params);
-        if($result['return_code'] == 200){
-            $LoginObserverData = $this->table->get($result['data']['ticket']);
-            $this->server->push($LoginObserverData['fd'], $params);
+        $loginSubject = $serverRepository->receiveNotifyMessage($params);
+        if($loginSubject->notifyResult == 200){
+            $LoginObserverData = $this->table->get($loginSubject->params['ticket']);
+            $this->websocketServer->server->push($LoginObserverData['fd'], $params);
         }
+        $response = new Response();
+        $response = new Response();
+        $response->code = 200;
+        $response->msg = "login succcess";
+        $response->data = json_encode($loginSubject->params);
+        return $response;
     }
 }

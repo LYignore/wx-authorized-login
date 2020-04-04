@@ -1,5 +1,5 @@
 <?php
-namespace src\Thrift\Client;
+namespace Lyignore\WxAuthorizedLogin\Thrift\Client;
 
 use Swoole\Client;
 use Thrift\Exception\TTransportException;

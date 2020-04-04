@@ -9,19 +9,15 @@ use Lyignore\WxAuthorizedLogin\Observer\LoginSubect;
 
 class ClientRepository implements ClientRepositoryInterface
 {
-    public function getTicket()
+    public function getTicket($str)
     {
         $ticket = Ticket::getInstance();
+        $ticket->setIdentify($str);
          return $ticket;
     }
 
     public function initUserLoginEntry(TicketEntityInterface $ticket, array $params = [])
     {
-        // 登录主体绑定登录观察者
-        $loginSubject = new LoginSubect();
-        $loginObserver = new LoginObserver($ticket);
-        $loginSubject->attach($loginObserver);
-
         // 确定返回模式，现阶段定义使用微信小程序，返回小程序二维码
         $loginDriver = config('websocketlogin.entry.driver');
         try{
@@ -29,8 +25,8 @@ class ClientRepository implements ClientRepositoryInterface
             $wxapplet = config('websocketlogin.wxapplet');
             $loginEntryDriver = new $loginDriver($wxapplet);
             // 生成微信登录图片
-            $ticketIdentity = $ticket->getIdentity();
-            return $loginEntryDriver->generateWxQr($ticketIdentity);
+            $ticketIdentify = $ticket->getIdentify();
+            return $loginEntryDriver->generateEntry($ticketIdentify);
         }catch (\Exception $e){
             throw new \Exception('驱动缺失');
         }

@@ -1,5 +1,5 @@
 <?php
-namespace src\Thrift\Client;
+namespace Lyignore\WxAuthorizedLogin\Thrift\Client;
 
 use Lyignore\WxAuthorizedLogin\ResponseTypes\StatusResponse;
 use Thrift\Exception\TException;
@@ -18,7 +18,7 @@ class LoginCommonClient
             $client = new LoginCommonCallServiceClient($protocol);
             $ticket = $params['ticket'];
             $phone = $params['phone'];
-            $sendData =compact('ticket', 'phone');
+            $sendData =json_encode(compact('ticket', 'phone'));
             $transport->open();
             $result = $client->notify($sendData);
             $transport->close();

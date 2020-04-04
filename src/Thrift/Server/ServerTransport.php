@@ -1,5 +1,5 @@
 <?php
-namespace src\Thrift\Server;
+namespace Lyignore\WxAuthorizedLogin\Thrift\Server;
 
 use Lyignore\WxAuthorizedLogin\Domain\Entities\TcpServerEntityInterface;
 use Thrift\Exception\TTransportException;
@@ -28,7 +28,7 @@ class ServerTransport extends TServerTransport
     /**
      * SwooleServerTransport constructor.
      */
-    public function __construct(TcpServerEntityInterface $server, $options=[])
+    public function __construct(\Swoole\Server\Port $server, $options=[])
     {
         $this->server =$server;
 //        $options = array_merge($this->options, $options);
