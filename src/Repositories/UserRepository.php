@@ -4,6 +4,7 @@ namespace Lyignore\WxAuthorizedLogin\Repositories;
 use Lyignore\WxAuthorizedLogin\Domain\Entities\TicketEntityInterface;
 use Lyignore\WxAuthorizedLogin\Domain\Repositories\UserRepositoryInterface;
 use Lyignore\WxAuthorizedLogin\Entities\Ticket;
+use Lyignore\WxAuthorizedLogin\Models\Login;
 use Lyignore\WxAuthorizedLogin\Thrift\Client\LoginCommonClient;
 
 class UserRepository implements UserRepositoryInterface
@@ -11,10 +12,14 @@ class UserRepository implements UserRepositoryInterface
     public function authorizedLogin(TicketEntityInterface $ticketEntity, array $params)
     {
         $ticket = $ticketEntity->getIdentify();
-        $phone = $params['phone']??"匿名用戶";
-        $data = compact('ticket', 'phone');
-        $loginCommonClient = new LoginCommonClient();
-        return $loginCommonClient->notify($data);
+        $items = json_encode($params);
+        $data = compact('ticket', 'items');
+        if(Login::create($data)){
+            $loginCommonClient = new LoginCommonClient();
+            return $loginCommonClient->notify($ticket);
+        }else{
+            throw new \Exception('Logged-in user information is not recorded');
+        }
     }
 
     /**

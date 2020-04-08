@@ -27,17 +27,44 @@ class LoginServiceProvider extends ServiceProvider
     public static $runsMigrations = true;
     public function boot()
     {
+        // Inject configuration information into the project
+        $this->publishes([
+            __DIR__ . '/../config/websocketlogin.php' => config_path('websocketlogin.php')
+        ]);
+
+        // Publish the page to routing
+        $this->publishes([
+            __DIR__.'/../resources/views/generate_entry.blade.php' => resource_path('views/vendor/generate_entry.blade.php')
+        ]);
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'websocket');
+
         if($this->app->runningInConsole()){
+            $this->registerMigrations();
+            
             $this->commands([
                 Command\Websocket::class
             ]);
         }
     }
 
+    /**
+     * Register Passport's migration files.
+     *
+     * @return void
+     */
+    protected function registerMigrations()
+    {
+        if (self::$runsMigrations) {
+            return $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        }
+
+        $this->publishes([
+            __DIR__.'/../database/migrations' => database_path('migrations'),
+        ]);
+    }
+
     public function register()
     {
-        $this->publishes([
-            __DIR__ . '/../config/websocketlogin.php' => config_path('websocketlogin.php')
-        ]);
+
     }
 }

@@ -8,6 +8,7 @@ use Lyignore\WxAuthorizedLogin\Domain\Repositories\ServerRepositoryInterface;
 use Lyignore\WxAuthorizedLogin\Entities\ShareMemory;
 use Lyignore\WxAuthorizedLogin\Entities\TcpServer;
 use Lyignore\WxAuthorizedLogin\Entities\WebsocketServer;
+use Lyignore\WxAuthorizedLogin\Models\Login;
 use Lyignore\WxAuthorizedLogin\Observer\LoginObserver;
 use Lyignore\WxAuthorizedLogin\Observer\LoginSubect;
 use Lyignore\WxAuthorizedLogin\ResponseTypes\StatusResponse;
@@ -32,15 +33,14 @@ class ServerRepository implements ServerRepositoryInterface
 
     protected static $loginSubject;
 
-    public function receiveNotifyMessage($inputParams)
+    public function receiveNotifyMessage($ticket)
     {
-        $params = $this->formatInput($inputParams);
+        $params = $this->formatInput($ticket);
         $this->verifyInput($params);
 
         if(!self::$loginSubject instanceof LoginSubjectEntityInterface){
             throw new \Exception('未绑定登录监听主体');
         }
-        $ticket = $params['ticket'];
         $memoryData = self::$table->get($ticket);
         if(!empty($memoryData)){
             self::$websocketServer->server->push($memoryData['fd'], \GuzzleHttp\json_encode($params));
@@ -139,21 +139,13 @@ class ServerRepository implements ServerRepositoryInterface
     }
 
 
-    public function formatInput($params)
+    public function formatInput($ticket)
     {
-        if(!is_array($params)){
-            $params = \GuzzleHttp\json_decode($params,true);
-        }
-        $ticket = $params['ticket']??'';
-        $phone = $params['phone']??'';
-        return compact('phone', 'ticket');
+        return json_decode(json_encode(Login::where('ticket', $ticket)->first()), true);
     }
 
     public function verifyInput(array $params)
     {
-        if(empty($params['phone'])){
-            throw new \Exception('电话参数缺失');
-        }
         if(empty($params['ticket'])){
             throw new \Exception('ticket参数缺失');
         }

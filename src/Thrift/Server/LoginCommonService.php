@@ -17,20 +17,20 @@ class LoginCommonService implements LoginCommonCallServiceIf
         $this->table = $memoryEntity;
     }
 
-    public function notify($params)
+    public function notify($ticket)
     {
         $serverRepository = new ServerRepository();
 
-        $loginSubject = $serverRepository->receiveNotifyMessage($params);
+        $loginSubject = $serverRepository->receiveNotifyMessage($ticket);
+        $pushData = json_encode($loginSubject->params);
         if($loginSubject->notifyResult == 200){
             $LoginObserverData = $this->table->get($loginSubject->params['ticket']);
-            $this->websocketServer->server->push($LoginObserverData['fd'], $params);
+            $this->websocketServer->server->push($LoginObserverData['fd'], $pushData);
         }
-        $response = new Response();
         $response = new Response();
         $response->code = 200;
         $response->msg = "login succcess";
-        $response->data = json_encode($loginSubject->params);
+        $response->data = $pushData;
         return $response;
     }
 }

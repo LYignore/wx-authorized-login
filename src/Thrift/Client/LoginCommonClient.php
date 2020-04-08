@@ -8,7 +8,7 @@ use Thrift\Transport\TFramedTransport;
 
 class LoginCommonClient
 {
-    public function notify($params)
+    public function notify($ticket)
     {
         $config = config('websocketlogin.listern');
         try{
@@ -16,11 +16,8 @@ class LoginCommonClient
             $transport = new TFramedTransport($socket);
             $protocol = new TBinaryProtocol($transport);
             $client = new LoginCommonCallServiceClient($protocol);
-            $ticket = $params['ticket'];
-            $phone = $params['phone'];
-            $sendData =json_encode(compact('ticket', 'phone'));
             $transport->open();
-            $result = $client->notify($sendData);
+            $result = $client->notify($ticket);
             $transport->close();
             return $result;
         }catch(TException $e){
