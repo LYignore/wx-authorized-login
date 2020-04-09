@@ -1,6 +1,7 @@
 {
     "name": "lyignore/wx-authorized-login",
     "description": "Use the websocket authorization applet to get the phone number login",
+    "license": "MIT",
     "authors": [
         {
             "name": "LY",
