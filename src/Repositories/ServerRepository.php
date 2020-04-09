@@ -77,7 +77,7 @@ class ServerRepository implements ServerRepositoryInterface
 
     public static function wsMessage($server, $frame)
     {
-        $server->push($frame, \GuzzleHttp\json_encode(StatusResponse::typeError()));
+        $server->push($frame->fd, \GuzzleHttp\json_encode(StatusResponse::typeError()));
     }
 
     public static function wsClose($server, $fd, $reactorId)
