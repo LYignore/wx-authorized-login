@@ -1,17 +1,43 @@
 <h1 align="center"> wx-authorized-login </h1>
 
-<p align="center"> Use the websocket authorization applet to get the phone number login.</p>
+<p align="center"> The PC side USES websocket authorization, the third party on the mobile side obtains user information, and the PC side logs in real time after authentication</p>
 
 
 ## Installing
 
-```shell
-$ composer require lyignore/wx-authorized-login -vvv
-```
+Install import plug-in
+> $ composer require lyignore/wx-authorized-login -vvv
+
+laravel Introduce the service and the corresponding configuration information and front-end interface
+> $ php artisan vendor:publish --provider="Lyignore\WxAuthorizedLogin\LoginServiceProvider"
+
+A database table is introduced to record the login information
+> $ php artisan migrate
 
 ## Usage
 
-TODO
+```angularjs
+// The front end connects to the websocket, and the successful connection returns a unique login identification ticket
+// Assuming a successful websocket connection, the ticket obtained is '729ed9b40ad8'
+
+$ticket = '729ed9b40ad8';
+
+// Gets the data stream for the login qr code
+
+$clientRepository = new Lyignore\WxAuthorizedLogin\Repositories\ClientRepository();
+$ticketObj = $clientRepository->getTicket($ticket);
+$result = $clientRepository->initUserLoginEntry($ticketObj, []);
+
+// After the third party authorization, the calling background obtains the authenticated user information and then performs the PC side login
+
+$ticket = $request->input('ticket');
+$userRepository = new Lyignore\WxAuthorizedLogin\Repositories\UserRepository();
+$ticketObj = $userRepository->getTicket($ticket);
+$ticketObj->setIdentify($ticket);
+$result = $userRepository->authorizedLogin($ticketObj, ['phone'=> '15641566789', 'user' => 'ly']);
+
+// The PC front-end websocket gets the array passed by the second argument of authorizedLogin
+```
 
 ## Contributing
 
