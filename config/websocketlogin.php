@@ -27,8 +27,8 @@ return [
         'wx_qr_logos' => 'https://api.weixin.qq.com/wxa/getwxacodeunlimit',
         'get_wx_openid' => 'https://api.weixin.qq.com/sns/jscode2session',
         'get_token_uri' => 'https://api.weixin.qq.com/cgi-bin/token',
-        'appid' => 'wxde4673a351a17c43',
-        'secret'=> '2f9a9eec48f4824df22de90a422ff479',
+        'appid' => '',
+        'secret'=> '',
         'path'  => 'page/index/index',
     ],
     'memory' => [

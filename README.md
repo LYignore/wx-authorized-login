@@ -41,6 +41,53 @@ $result = $userRepository->authorizedLogin($ticketObj, ['phone'=> '15641566789',
 // The PC front-end websocket gets the array passed by the second argument of authorizedLogin
 ```
 
+## Collcation
+```angularjs
+// If using applet login, configure next time
+// open file "/config/websocketlogin.php"
+return [
+    'helpfunction' => true, // 插件自定义的一些方法，命名和laravel方法冲突，引入laravel后设置成false即可
+    'websocket' => [    // websocket配置的监听端口号和地址等信息
+        'uri'  => '0.0.0.0',
+        'port' => 8000,
+        'worker_num'  => 8,
+        'dispatch_mode' => 5,
+        'package_max_length' => 8 * 1024 * 1024,
+        'open_eof_check' => true,
+        'original_name' => true,
+        'daemonize' => false,
+    ],
+    'listern' => [
+        'uri'  => '0.0.0.0',
+        'port' => 8081,
+        'worker_num' => 1,
+        'dispatch_mode' => 1,
+        'open_length_check' => true,
+        'package_length_type' => 'N',
+        'package_body_offset' => 4,
+        'package_length_offset' => 0,
+        'mode' => SWOOLE_PROCESS,
+        'type' => SWOOLE_SOCK_TCP,
+    ],
+    'wxapplet' => [
+        'wx_qr_logos' => 'https://api.weixin.qq.com/wxa/getwxacodeunlimit',
+        'get_wx_openid' => 'https://api.weixin.qq.com/sns/jscode2session',
+        'get_token_uri' => 'https://api.weixin.qq.com/cgi-bin/token',
+        'appid' => 'wxde4673a351awe123',    // 小程序的APPID
+        'secret'=> '2e9a9eec48f4824df22de90a422ase34',  // 小程序的SECRET
+        'path'  => 'page/index/index',  // 小程序生成二维码，配置二维码的路由地址
+    ],
+    'memory' => [
+        'fd' => 'int',
+        'ticket' => 'string',
+        'status' => 'int',
+    ],
+    'entry' => [
+        'driver' => 'Lyignore\WxAuthorizedLogin\ResponseTypes\WechatQrResponse',    // 配置授权登录入口的驱动
+    ]
+];
+```
+
 ## Contributing
 
 You can contribute in one of three ways:
