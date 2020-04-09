@@ -14,6 +14,8 @@ laravel Introduce the service and the corresponding configuration information an
 A database table is introduced to record the login information
 > $ php artisan migrate
 
+Start websocket service
+> $ php artisan websocket: start
 ## Usage
 
 ```angularjs
